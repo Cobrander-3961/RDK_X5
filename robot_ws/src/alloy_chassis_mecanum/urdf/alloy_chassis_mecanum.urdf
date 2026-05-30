@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="铝合金4驱底盘麦轮 -P1.STEP.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="5.0" />
+      <inertia
+        ixx="0.05"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.08"
+        iyz="0.0"
+        izz="0.1" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="wheel1_Link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.2" />
+      <inertia
+        ixx="0.001"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.001"
+        iyz="0.0"
+        izz="0.0005" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel1_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel1_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel1_joint"
+    type="continuous">
+    <origin
+      xyz="-0.20133 -0.093736 -0.038912"
+      rpy="1.5708 0.65624 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel1_Link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159"
+      upper="3.14159"
+      effort="0.5"
+      velocity="10.0" />
+    <dynamics
+      damping="0.1"
+      friction="0.01" />
+  </joint>
+  <link
+    name="wheel2_Link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.2" />
+      <inertia
+        ixx="0.001"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.001"
+        iyz="0.0"
+        izz="0.0005" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel2_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel2_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel2_joint"
+    type="continuous">
+    <origin
+      xyz="0 -0.093736 -0.038912"
+      rpy="1.5708 1.0188 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel2_Link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159"
+      upper="3.14159"
+      effort="0.5"
+      velocity="10.0" />
+    <dynamics
+      damping="0.1"
+      friction="0.01" />
+  </joint>
+  <link
+    name="wheel3_Link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.2" />
+      <inertia
+        ixx="0.001"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.001"
+        iyz="0.0"
+        izz="0.0005" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel3_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel3_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel3_joint"
+    type="continuous">
+    <origin
+      xyz="-0.20383 -0.27874 -0.038912"
+      rpy="-1.5708 -1.2469 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel3_Link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159"
+      upper="3.14159"
+      effort="0.5"
+      velocity="10.0" />
+    <dynamics
+      damping="0.1"
+      friction="0.01" />
+  </joint>
+  <link
+    name="wheel4_Link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.2" />
+      <inertia
+        ixx="0.001"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.001"
+        iyz="0.0"
+        izz="0.0005" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel4_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/wheel4_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel4_joint"
+    type="continuous">
+    <origin
+      xyz="0 -0.27874 -0.038912"
+      rpy="-1.5708 -0.9016 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel4_Link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159"
+      upper="3.14159"
+      effort="0.5"
+      velocity="10.0" />
+    <dynamics
+      damping="0.1"
+      friction="0.01" />
+  </joint>
+</robot>

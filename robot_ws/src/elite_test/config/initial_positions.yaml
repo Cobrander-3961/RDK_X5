@@ -1,0 +1,9 @@
+# Default initial positions for arm's ros2_control fake system
+
+initial_positions:
+  arm_joint1: 0
+  arm_joint2: 0
+  arm_joint3: 0
+  arm_joint4: 0
+  end_joint1: 0
+  gripper_joint: 0

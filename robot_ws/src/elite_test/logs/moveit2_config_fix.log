@@ -1,0 +1,58 @@
+
+# MoveIt2 机械臂配置修复日志 — 2026-05-18
+
+## 背景
+机械臂为 180° 舵机驱动 (PCA9685)，舵机 90° 为中位 (1.5ms 脉宽)。
+MoveIt2 Setup Assistant 生成的初始配置存在多处与实际硬件不匹配的问题。
+
+## 修复清单
+
+### 1. 关节类型修复
+- **文件**: `arm_ros2/urdf/arm.urdf`
+- **问题**: 6 个关节 type="continuous" (无限旋转)，但舵机有 180° 机械限位
+- **修复**: 全部改为 type="revolute"
+
+### 2. 关节限位修复
+- **文件**: `arm_ros2/urdf/arm.urdf`
+- **修复**: limit 参数更新
+  | 关节 | lower | upper | 对应舵机 |
+  |------|-------|-------|----------|
+  | arm_joint1~4 | -1.57 | +1.57 | 0°~180° |
+  | end_joint1 | -1.57 | +1.57 | 0°~180° |
+  | gripper_joint | -0.78 | +0.78 | 45°~135° |
+  | velocity | — | 3.14 | ~180°/s |
+  | effort | — | 2.0 | Nm |
+
+### 3. 速度/加速度限位
+- **文件**: `elite_test/config/joint_limits.yaml`
+- **修复**:
+  - 添加 has_position_limits / min_position / max_position
+  - max_velocity: 1 → 3.14 (匹配 URDF)
+  - max_acceleration: 0 → 6.28
+  - has_acceleration_limits: false → true
+  - default_velocity_scaling_factor: 0.1 → 0.5
+
+### 4. 自碰撞修复
+- **文件**: `elite_test/config/arm.srdf`
+- **问题**: base_link 与 arm_Link1 起始位姿碰撞
+- **修复**: 添加 ACL (Allowed Collision Matrix)，禁用 7 对相邻杆件 + 1 对末端杆件碰撞检测
+
+### 5. 虚拟关节修复
+- **文件**: `elite_test/config/arm.srdf`
+- **问题**: virtual_joint parent_frame="base_link" child_link="base_link" 循环引用
+- **修复**: parent_frame → "world"
+
+### 6. 初始状态
+- **文件**: `elite_test/config/arm.srdf`
+- **状态**: 所有关节 home state = 0 rad = 舵机 90° 中位 (正确，无需修改)
+
+## 关节参数总览
+
+| 关节 | 类型 | 行程 | 初始 | 最大速度 |
+|------|------|------|------|----------|
+| arm_joint1 | revolute | ±90° | 0 (90°) | 180°/s |
+| arm_joint2 | revolute | ±90° | 0 (90°) | 180°/s |
+| arm_joint3 | revolute | ±90° | 0 (90°) | 180°/s |
+| arm_joint4 | revolute | ±90° | 0 (90°) | 180°/s |
+| end_joint1 | revolute | ±90° | 0 (90°) | 180°/s |
+| gripper_joint | revolute | ±45° | 0 (90°) | 180°/s |

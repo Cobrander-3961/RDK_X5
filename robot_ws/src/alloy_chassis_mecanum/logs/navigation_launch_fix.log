@@ -1,0 +1,58 @@
+
+# Navigation2 完整启动日志 — 2026-05-18
+
+## 启动结果：成功
+
+所有 7 个导航节点正常激活：
+
+| 节点 | 状态 |
+|------|------|
+| controller_server | ✅ Activated |
+| smoother_server | ✅ Activated |
+| planner_server | ✅ Activated |
+| behavior_server | ✅ Activated |
+| bt_navigator | ✅ Activated |
+| waypoint_follower | ✅ Activated |
+| velocity_smoother | ✅ Activated |
+
+## 修复的问题
+
+### 问题 1: `AreErrorCodesActiveCondition` 插件缺失
+- **错误**: `libnav2_are_error_codes_active_condition_bt_node.so: cannot open shared object file`
+- **原因**: ROS2 Humble 不包含该插件（仅 Rolling/Iron 有）
+- **修复**: 从 plugin_lib_names 中移除 `nav2_are_error_codes_active_condition_bt_node`
+
+### 问题 2: `RemovePassedGoals` 行为树节点缺失
+- **错误**: `Error at line 12: -> Node not recognized: RemovePassedGoals`
+- **原因**: bt_navigator 加载 `navigate_through_poses_w_replanning_and_recovery.xml` 时，缺少 `nav2_remove_passed_goals_action_bt_node` 插件
+- **修复**: 添加 `nav2_remove_passed_goals_action_bt_node` 和 `nav2_navigate_through_poses_action_bt_node` 到 plugin_lib_names
+
+### 问题 3: BT XML 参数名不匹配
+- **原因**: Humble 使用 `default_nav_to_pose_bt_xml` / `default_nav_through_poses_bt_xml`，而非 `default_bt_xml_filename`
+- **修复**: 使用正确的参数名 + 绝对路径
+
+## 最终配置 (nav2_params.yaml)
+
+```yaml
+bt_navigator:
+  ros__parameters:
+    default_nav_to_pose_bt_xml: "/opt/ros/humble/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_through_poses_bt_xml: "/opt/ros/humble/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+    plugin_lib_names:
+      - ... (所有插件)
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      # nav2_are_error_codes_active_condition_bt_node  # Humble 不可用
+```
+
+## 残留非阻塞问题
+
+| 问题 | 类型 | 说明 |
+|------|------|------|
+| KDL root link inertia | WARN | URDF base_link 含惯性参数，KDL 不支持根链接惯性 |
+| Old-style static_transform args | WARN | launch 文件使用旧式参数格式 |
+| Serial frame sync | WARN | 启动时串口缓冲区帧对齐，自行恢复 |
+| SLAM laser range | WARN | 激光范围参数与雷达能力边界对齐 |
+| TF extrapolation | ERROR (rviz) | RViz 启动时 TF 树未完全建立，几秒后恢复 |
+| GLSL vertex program | ERROR (rviz) | VirtualBox GPU 驱动限制，不影响功能 |
+| local_costmap tf timeout | INFO | SLAM 尚未发布 map→odom，初始化后恢复 |

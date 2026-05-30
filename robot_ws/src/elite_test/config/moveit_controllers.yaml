@@ -1,0 +1,19 @@
+# Fake controller manager: 轨迹执行直接返回成功，无需 ros2_control。
+# 实际舵机由 arm_motion_planner 通过串口下发 F407 驱动。
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - arm_group_controller
+
+  arm_group_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - arm_joint1
+      - arm_joint2
+      - arm_joint3
+      - arm_joint4
+      - end_joint1
+      - gripper_joint

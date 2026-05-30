@@ -1,0 +1,139 @@
+# F407 下位机串口接收程序修复日志
+
+## 问题描述
+RDKX5 端 `serial_odom_receiver.py` 已实现下行 `/cmd_vel` 速度指令发送 (type 0x10)，但 STM32F407 端接收解析存在两个缺陷：
+
+1. **帧长度解析端序错误**: C 端按大端序解析长度字段，与 Python `struct.pack('<H')` 小端序不匹配
+2. **速度转换参数错误**: 使用临时占位参数 (wheel_base=0.3, wheel_radius=0.05)，与上行里程计任务 ROS2SendTask 中的实际参数不一致
+3. **代码组织**: 接收逻辑全部散落在 main.c 中，不利于维护
+
+## 根因分析
+
+### 端序问题 (main.c:148 旧代码)
+```c
+// 旧: 大端序解析 (MSB << 8) | LSB
+uint16_t frame_length = (cmd_buffer[start_idx + 2] << 8) | cmd_buffer[start_idx + 3];
+
+// Python 发送端: struct.pack('<H', len(data)) — 小端序
+// 当 len=8 时: 发送 [0x08, 0x00]
+// 旧代码解析: (0x08 << 8) | 0x00 = 0x0800 = 2048 (错误!)
+// 正确应为:   0x08 | (0x00 << 8) = 0x0008 = 8
+```
+
+结果: 帧长度被解析为 2048，超过缓冲区限制，帧被丢弃，速度指令从未到达电机控制层。
+
+### 速度转换问题 (main.c:182-195 旧代码)
+```c
+// 旧参数 (与实际机器人不匹配)
+const float wheel_base = 0.3f;   // 实际为 0.28m
+const float wheel_radius = 0.05f; // 实际直径为 0.065m (半径 0.0325m)
+
+// 旧: 将 m/s 转换为 RPM 后直接作为 encoder counts 传给电机
+// 实际: 电机控制期望的是 "编码器计数/50ms 控制周期"
+```
+
+结果:
+- RPM 数值量级 (~数百) 作为编码器计数被电机 PID 当作目标值
+- 实际需求是编码器计数/50ms (~数十)，量级差约 10 倍
+- 轮径轮距偏差导致左右轮速分配错误
+
+## 修改内容
+
+### 1. ros2_uart.h — 新增数据结构与函数声明
+
+```c
+/* 下行指令 — 与 Python 发送端对齐 */
+typedef struct {
+  float linear_x;   // 线速度 m/s
+  float angular_z;  // 角速度 rad/s
+} VelocityCmd_t;
+
+typedef struct {
+  int32_t left_speed;   // 左轮目标速度 (编码器计数/50ms)
+  int32_t right_speed;  // 右轮目标速度
+  uint8_t left_dir;     // 0=FORWARD, 1=REVERSE
+  uint8_t right_dir;
+} MotorSpeedCmd_t;
+
+void ROS2_UART_VelocityToMotorSpeed(const VelocityCmd_t *vel, MotorSpeedCmd_t *motor);
+int  ROS2_UART_ParseVelocityFrame(const uint8_t *buffer, uint16_t length,
+                                   VelocityCmd_t *vel, uint16_t *consumed);
+```
+
+### 2. ros2_uart.c — 新增帧解析函数
+
+**ROS2_UART_ParseVelocityFrame**: 从字节流解析下行速度指令帧
+- 查找帧头 0xAA，跳过无效前导字节
+- 长度按**小端序**解析: `data_len = buf[idx+2] | (buf[idx+3] << 8)`
+- 验证帧尾 0x55，长度上限保护 (≤64B)
+- 返回 `consumed` 指示已处理字节数，支持缓冲区滑动窗口
+
+**ROS2_UART_VelocityToMotorSpeed**: 运动学转换
+- 使用与 ROS2SendTask 一致的参数:
+  - `wheel_separation = 0.28m` (轮距)
+  - `wheel_diameter   = 0.065m` (轮径)
+  - `encoder_ppr      = 1024`  (编码器线数)
+  - `control_period_ms = 50ms` (与 SPEED_UPDATE_INTERVAL_MS 一致)
+- 转换公式:
+  ```
+  编码器计数/50ms = v(m/s) × PPR × 50 / (π × D × 1000)
+                  = v × 1024 × 50 / (3.1416 × 0.065 × 1000)
+                  = v × 250.7
+  ```
+- 差分驱动: `v_left = v_x - ω_z × L/2`, `v_right = v_x + ω_z × L/2`
+- 负速度 → REVERSE 方向 + 绝对值速度
+
+### 3. main.c — 使用新模块替换旧代码
+
+**旧代码** (约 90 行): 包含手动帧查找、BE 端序解析、硬编码错误参数
+**新代码** (约 50 行):
+```c
+VelocityCmd_t vel_cmd;
+uint16_t consumed;
+int ret = ROS2_UART_ParseVelocityFrame(cmd_buffer, cmd_index, &vel_cmd, &consumed);
+
+if (ret == 1) {
+    MotorSpeedCmd_t motor;
+    ROS2_UART_VelocityToMotorSpeed(&vel_cmd, &motor);
+
+    MyTask_SetTargetSpeed(0, motor.left_speed);   // 左前
+    MyTask_SetTargetSpeed(1, motor.left_speed);   // 左后
+    MyTask_SetDirection(0, (MotorDirection_t)motor.left_dir);
+    MyTask_SetDirection(1, (MotorDirection_t)motor.left_dir);
+
+    MyTask_SetTargetSpeed(2, motor.right_speed);  // 右前
+    MyTask_SetTargetSpeed(3, motor.right_speed);  // 右后
+    MyTask_SetDirection(2, (MotorDirection_t)motor.right_dir);
+    MyTask_SetDirection(3, (MotorDirection_t)motor.right_dir);
+}
+```
+
+## 协议帧对照
+
+### 下行 (ROS2 → STM32): 速度指令 0x10
+```
+Byte:   [0]    [1]    [2]   [3]   [4..7]       [8..11]           [12]
+Value:  0xAA   0x10   0x08  0x00  linear_x LE   angular_z LE      0x55
+Field:  START  TYPE   LEN (LE=8)  float m/s     float rad/s       END
+```
+
+| 字段 | 偏移 | 大小 | 编码 | 示例值 (0.1 m/s, 0.05 rad/s) |
+|------|------|------|------|------------------------------|
+| START | 0 | 1B | 0xAA | AA |
+| TYPE | 1 | 1B | 0x10 | 10 |
+| LEN | 2 | 2B | uint16 LE | 08 00 |
+| linear_x | 4 | 4B | float32 LE | CD CC CC 3D |
+| angular_z | 8 | 4B | float32 LE | CD CC 4C 3D |
+| END | 12 | 1B | 0x55 | 55 |
+
+### 上行 (STM32 → ROS2): 不变
+| Type | 数据 | 大小 |
+|------|------|------|
+| 0x01 | Odometry: 6×double | 48B |
+| 0x02 | TF: 3×double | 24B |
+
+## 验证要点
+1. RDKX5 发布 `/cmd_vel` 后，F407 USART2 应收到完整 13 字节帧
+2. 帧长度 0x0008 能正确解析为 8 (而非 2048)
+3. 电机 PID 日志中 target 值应与速度指令对应 (如 0.1 m/s → ~25 计数/50ms)
+4. 左/右轮差速方向与 angular_z 符号一致

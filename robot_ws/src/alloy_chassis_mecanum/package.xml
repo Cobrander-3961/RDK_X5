@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>alloy_chassis_mecanum</name>
+  <version>1.0.0</version>
+  <description>URDF Description package for alloy chassis with mecanum wheels</description>
+  <maintainer email="user@example.com">User</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>urdf</depend>
+  <depend>xacro</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rviz2</depend>
+  <depend>gazebo_ros</depend>
+  <depend>nav2_bringup</depend>
+  <depend>nav2_common</depend>
+  <depend>slam_toolbox</depend>
+  <depend>ydlidar_ros2_driver</depend>
+  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

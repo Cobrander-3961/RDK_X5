@@ -1,0 +1,57 @@
+# joint_limits.yaml — 180° 舵机机械臂 (0°~180°, 90° 为初始中位)
+#
+# URDF 中 joint origin 定义舵机 90° 位置为 0 rad,
+# ±1.57 rad 对应 0°~180° 满行程.
+
+default_velocity_scaling_factor: 0.5
+default_acceleration_scaling_factor: 0.5
+
+joint_limits:
+  arm_joint1:
+    has_position_limits: true
+    min_position: -1.57
+    max_position: 1.57
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28
+  arm_joint2:
+    has_position_limits: true
+    min_position: -1.57
+    max_position: 1.57
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28
+  arm_joint3:
+    has_position_limits: true
+    min_position: -1.57
+    max_position: 1.57
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28
+  arm_joint4:
+    has_position_limits: true
+    min_position: -1.57
+    max_position: 1.57
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28
+  end_joint1:
+    has_position_limits: true
+    min_position: -1.57
+    max_position: 1.57
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28
+  gripper_joint:
+    has_position_limits: true
+    min_position: -0.78
+    max_position: 0.78
+    has_velocity_limits: true
+    max_velocity: 3.14
+    has_acceleration_limits: true
+    max_acceleration: 6.28

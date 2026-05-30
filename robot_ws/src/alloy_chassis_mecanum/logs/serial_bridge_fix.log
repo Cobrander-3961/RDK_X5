@@ -1,0 +1,62 @@
+
+# 双向串口桥接节点修复与扩展日志
+
+## 问题描述
+1. ROS2 端 `serial_odom_receiver` 无法正确解析下位机 STM32 串口数据
+2. 缺少 ROS2 → STM32 下行控制指令发送能力
+3. STM32 接收命令帧长度字段端序错误
+
+## 根因分析
+### 上行解析问题
+DAPLink 虚拟串口 (`/dev/ttyACM0`) 连接的是 STM32 的 USART1 (PA9/PA10)，而 `ros2_uart.c` 将 ROS2 数据发往 USART2 (PA2/PA3)，数据发到了无物理连接的串口上。
+
+### 下行缺失
+`serial_odom_receiver` 仅有上行接收逻辑，未实现 `/cmd_vel` 订阅和下行发送。
+
+### 端序错误 (STM32)
+`main.c:148` 中 `ProcessROS2Command` 接收命令帧时，长度字段按**大端序**解析，而发送端 (`ros2_uart.c`) 使用**小端序**。
+
+## 修改内容
+
+### 1. ROS2 — serial_odom_receiver.py
+| 修改 | 说明 |
+|------|------|
+| 添加下行发送 | 新增 `send_frame()`、`cmd_vel_callback()`、`watchdog_check()` |
+| 订阅 /cmd_vel | 接收 Nav2 controller_server 的 Twist 指令，下发到 STM32 |
+| 安全看门狗 | 参数 `watchdog_timeout` (默认 0.5s)，超时自动发送零速停车 |
+| 串口写锁 | `threading.Lock` 保护串口写操作 |
+| 协议帧构建 | 下行帧: `[0xAA][0x10][0x08 0x00][linear_x float LE][angular_z float LE][0x55]` |
+
+### 2. STM32 — main.c
+| 修改 | 说明 |
+|------|------|
+| 接收命令端序修复 | `cmd_buffer[idx+2] \| (cmd_buffer[idx+3] << 8)` — 改为小端序 |
+
+## 协议帧汇总
+
+### 上行 (STM32 → ROS2)
+| Type | 数据 | 帧长 |
+|------|------|------|
+| 0x01 | Odometry: 6×double (position_x, position_y, orient_z, orient_w, vx, vz) | 53B |
+| 0x02 | TF: 3×double (x, y, theta) | 29B |
+
+### 下行 (ROS2 → STM32)
+| Type | 数据 | 帧长 |
+|------|------|------|
+| 0x10 | VelocityCmd: 2×float (linear_x, angular_z) | 13B |
+
+## 数据流全景
+```
+STM32 (USART1 /dev/ttyACM0)
+  ├── 上行 0x01 里程计 → ROS2 → /odom topic → Nav2
+  ├── 上行 0x02 TF     → ROS2 → /tf    topic → Nav2
+  └── 下行 0x10 速度   ← ROS2 ← /cmd_vel        ← Nav2 controller_server
+                                       ↑
+                              看门狗: 0.5s 超时自动停车
+```
+
+## 验证结果
+1. `/odom` topic 正常发布，里程计数据正确
+2. `/tf` topic 正常发布，odom → base_link 变换正确
+3. 下行 0x10 速度帧格式验证通过: `AA 10 08 00 CD CC CC 3D CD CC 4C 3D 55`
+4. 看门狗 20Hz 检测正常工作

@@ -1,0 +1,27 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_group_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+arm_group_controller:
+  ros__parameters:
+    joints:
+      - arm_joint1
+      - arm_joint2
+      - arm_joint3
+      - arm_joint4
+      - end_joint1
+      - gripper_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
+    open_loop_control: true
+    allow_integration_in_goal_trajectories: true

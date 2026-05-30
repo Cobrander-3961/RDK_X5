@@ -1,0 +1,36 @@
+# ROS2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# STM32 build artifacts
+F407_Base_Control/MDK-ARM/build/
+F407_Base_Control/MDK-ARM/*.o
+F407_Base_Control/MDK-ARM/*.d
+F407_Base_Control/MDK-ARM/*.crf
+F407_Base_Control/MDK-ARM/*.htm
+F407_Base_Control/MDK-ARM/*.lnp
+F407_Base_Control/MDK-ARM/*.axf
+F407_Base_Control/MDK-ARM/*.hex
+F407_Base_Control/MDK-ARM/*.sct
+F407_Base_Control/MDK-ARM/*.dep
+F407_Base_Control/MDK-ARM/JLink*
+F407_Base_Control/MDK-ARM/RTE/
+
+# System
+.DS_Store
+Thumbs.db
+
+# ROS2 log
+*.ros/log/
