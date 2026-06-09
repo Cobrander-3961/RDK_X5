@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import py_compile; py_compile.compile\\('/home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/scripts/serial_odom_receiver.py', doraise=True\\); print\\('Syntax OK'\\)\")",
+      "Bash(ls /dev/ttyACM0 2>/dev/null && echo \"STM32 connected\" || echo \"STM32 not connected\")",
+      "Read(//dev/**)",
+      "Read(//opt/ros/humble/share/nav2_bt_navigator/**)",
+      "Read(//opt/ros/humble/share/nav2_behavior_tree/**)",
+      "Read(//opt/ros/humble/**)",
+      "Bash(xargs -I{} sh -c 'nm -D {} 2>/dev/null | grep -l \"ReactiveFallback\"')",
+      "Bash(identify \"/home/cobrander/Share/屏幕截图 2026-05-18 224052.png\")",
+      "Bash(convert \"/home/cobrander/Share/屏幕截图 2026-05-18 224052.png\" -resize 800x600 /tmp/rviz_screenshot.png)",
+      "Bash(python3 -c ' *)",
+      "Bash(dpkg -l)",
+      "Bash(apt list *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(mkdir -p /home/cobrander/RDK_X5/robot_ws/src/robot_brain/launch /home/cobrander/RDK_X5/robot_ws/src/robot_brain/scripts /home/cobrander/RDK_X5/robot_ws/src/robot_brain/config)",
+      "Bash(chmod +x /home/cobrander/RDK_X5/robot_ws/src/robot_brain/scripts/*.py)",
+      "Bash(lsusb)",
+      "Bash(/home/cobrander/RDK_X5/install/robot_brain/lib/robot_brain/stereo_detect.py 0)",
+      "Bash(v4l2-ctl --list-devices)",
+      "Bash(v4l2-ctl -d /dev/video2 --list-formats)",
+      "Bash(v4l2-ctl -d /dev/video3 --list-formats)",
+      "Bash(v4l2-ctl -d /dev/video2 --all)",
+      "Bash(/home/cobrander/RDK_X5/install/robot_brain/lib/robot_brain/stereo_detect.py 2)",
+      "Bash(kill %1)",
+      "Bash(pip install *)",
+      "Bash(python3 -c \"from ultralytics import YOLO; print\\('YOLO OK'\\)\")",
+      "Bash(pip list *)",
+      "Bash(kill 54532 54552)",
+      "Bash(wait 54415)",
+      "Bash(python3 -c \"import sys; sys.path.insert\\(0,'/home/cobrander/Share/yolov5'\\); import torch; print\\('torch OK'\\)\")"
+    ],
+    "additionalDirectories": [
+      "/home/cobrander/RDK_X5/robot_ws/src/robot_brain"
+    ]
+  }
+}

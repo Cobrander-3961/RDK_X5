@@ -61,6 +61,12 @@ class SerialOdomReceiver(Node):
         self.frame_start = 0xAA
         self.frame_end = 0x55
 
+        # 位置保持过滤 (防止编码器噪声导致漂移)
+        self.last_x = 0.0
+        self.last_y = 0.0
+        self.last_yaw = 0.0
+        self.pos_hold = True  # 首次收到数据时初始化
+
         # 接收缓冲区
         self.buffer = bytearray()
 
@@ -220,6 +226,26 @@ class SerialOdomReceiver(Node):
         try:
             # 解析里程计数据
             position_x, position_y, orientation_z, orientation_w, linear_velocity_x, angular_velocity_z = struct.unpack('<dddddd', data)
+
+            # 死区过滤: 编码器噪声导致低速漂移, 低于阈值归零
+            VEL_DEADBAND = 0.005
+            if abs(linear_velocity_x) < VEL_DEADBAND:
+                linear_velocity_x = 0.0
+            if abs(angular_velocity_z) < VEL_DEADBAND:
+                angular_velocity_z = 0.0
+
+            # 位置保持: 速度为零时锁住位置, 防止假积分漂移
+            POS_MOVE_THRESH = 0.0001
+            if linear_velocity_x == 0.0 and angular_velocity_z == 0.0:
+                if self.pos_hold:
+                    position_x = self.last_x
+                    position_y = self.last_y
+                    orientation_z = self.last_yaw
+            elif abs(position_x - self.last_x) > POS_MOVE_THRESH or abs(position_y - self.last_y) > POS_MOVE_THRESH:
+                self.pos_hold = False
+            self.last_x = position_x
+            self.last_y = position_y
+            self.last_yaw = orientation_z
 
             # 创建里程计消息
             odom = Odometry()

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>robot_brain</name>
+  <version>0.1.0</version>
+  <description>Voice→Vision→Decision→Voice pipeline using Doubao Vision Pro API</description>
+  <maintainer email="user@example.com">Cobrander</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>python3-numpy</depend>
+  <depend>python3-opencv</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

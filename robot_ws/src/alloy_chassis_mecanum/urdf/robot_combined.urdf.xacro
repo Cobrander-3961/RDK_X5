@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="robot_combined" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- 底盘 URDF -->
+  <xacro:include filename="alloy_chassis_mecanum.urdf" />
+
+  <!-- 机械臂: 挂载到底盘 base_link 上方 -->
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_base_link"/>
+    <origin xyz="0.05 0 0.15" rpy="0 0 0"/>  <!-- 底盘中心偏前, 高15cm -->
+  </joint>
+
+  <link name="arm_base_link">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/>
+    </inertial>
+  </link>
+
+  <!-- 机械臂 URDF (base_link → arm_base_link 重映射) -->
+  <xacro:include filename="$(find arm_ros2)/urdf/arm.urdf" />
+</robot>

@@ -28,5 +28,9 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
   RENAME serial_odom_receiver
 )
+install(PROGRAMS
+  scripts/robot_desc_pub.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 ament_package()

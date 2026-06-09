@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="arm">
+    
+    
+    
+    
+    
+    <group name="arm_group">
+        <chain base_link="arm_base_link" tip_link="end_Link1" />
+    </group>
+    
+    <group_state name="home" group="arm_group">
+        <joint name="arm_joint1" value="0" />
+        <joint name="arm_joint2" value="0" />
+        <joint name="arm_joint3" value="0" />
+        <joint name="arm_joint4" value="0" />
+        <joint name="end_joint1" value="0" />
+        <joint name="gripper_joint" value="0" />
+    </group_state>
+    
+    <virtual_joint name="Virtual_joint" type="fixed" parent_frame="world" child_link="arm_base_link" />
+    
+    <disable_collisions link1="arm_base_link" link2="arm_Link1" reason="Adjacent" />
+    <disable_collisions link1="arm_Link1" link2="arm_Link2" reason="Adjacent" />
+    <disable_collisions link1="arm_Link2" link2="arm_Link3" reason="Adjacent" />
+    <disable_collisions link1="arm_Link3" link2="arm_Link4" reason="Adjacent" />
+    <disable_collisions link1="arm_Link4" link2="gripper_Link" reason="Adjacent" />
+    <disable_collisions link1="gripper_Link" link2="end_Link1" reason="Adjacent" />
+    <disable_collisions link1="gripper_Link" link2="end_Link2" reason="Adjacent" />
+    
+    <disable_collisions link1="end_Link1" link2="end_Link2" reason="Never" />
+</robot>

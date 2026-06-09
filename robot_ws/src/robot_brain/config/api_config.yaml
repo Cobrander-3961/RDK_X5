@@ -1,0 +1,30 @@
+# 火山引擎 / 豆包 API 配置
+doubao:
+  api_key: "ark-4bf39fb4-59ad-4dbe-a983-3dbc441231f2-f0c41"
+  model: "ep-20260609152524-hhxtc"  # 推理接入点ID (doubao-1.5-vision-pro)
+  endpoint: "https://ark.cn-beijing.volces.com/api/v3"
+  max_tokens: 1024
+  temperature: 0.7
+
+# 语音识别 (火山引擎 ASR)
+asr:
+  app_id: "YOUR_APP_ID"
+  token: "YOUR_TOKEN"
+  cluster: "volcengine_input_common"
+
+# 语音合成 (火山引擎 TTS)
+tts:
+  app_id: "YOUR_APP_ID"
+  token: "YOUR_TOKEN"
+  cluster: "volcengine_tts"
+
+# 摄像头
+camera:
+  device_id: 0
+  width: 640
+  height: 480
+
+# 串口 (机械臂)
+serial:
+  port: "/dev/ttyACM0"
+  baudrate: 115200

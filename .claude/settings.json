@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(apt search *)",
+      "Bash(python3 -c \"import moveit_commander\")",
+      "Bash(dpkg -L ros-humble-pymoveit2)",
+      "Bash(grep \"\\\\.py$\")",
+      "Bash(python3 -c \"from moveit_configs_utils import MoveItConfigsBuilder; c = MoveItConfigsBuilder\\('arm', package_name='elite_test'\\).to_moveit_configs\\(\\); print\\(dir\\(c\\)\\)\")",
+      "Bash(chmod +x /home/cobrander/RDK_X5/robot_ws/src/elite_test/scripts/arm_fixed_grasp_test.py /home/cobrander/RDK_X5/robot_ws/src/elite_test/scripts/arm_motion_planner.py)",
+      "Bash(python3 -c ' *)",
+      "Bash(pkill -f \"demo.launch\\\\|move_group\\\\|rviz2\")",
+      "Bash(/home/cobrander/RDK_X5/install/elite_test/lib/elite_test/arm_reach_test.py)",
+      "Bash(pkill -f \"demo.launch\\\\|move_group\\\\|rviz2\\\\|arm_bridge\")",
+      "Bash(chmod +x /home/cobrander/RDK_X5/robot_ws/src/elite_test/scripts/arm_bridge.py)",
+      "Bash(wget -q --show-progress -T 30 https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/deploy.prototxt -O /tmp/mobilenet_ssd.prototxt)",
+      "Bash(wget -q --show-progress -T 30 https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/mobilenet_iter_73000.caffemodel -O /tmp/mobilenet_ssd.caffemodel)",
+      "Bash(cp /home/cobrander/Share/yolov3-tiny.weights /tmp/)",
+      "Bash(timeout 8 /home/cobrander/RDK_X5/install/robot_brain/lib/robot_brain/yolo_stereo_detect.py 2)",
+      "Bash(python3 -c \"from ultralytics import YOLO; m=YOLO\\('yolov8n.pt'\\); print\\('YOLOv8 OK'\\)\")",
+      "Bash(pkill -f \"navigation_with_robot\\\\|slam\\\\|controller\\\\|planner\\\\|behavior\\\\|bt_navigator\\\\|smoother\\\\|lifecycle\\\\|rviz2\\\\|serial_odom\\\\|robot_state\\\\|joint_state\\\\|static_transform\\\\|velocity\\\\|waypoint\")",
+      "Bash(pkill -f \"navigation\\\\|slam\\\\|rviz2\\\\|serial_odom\\\\|ros2\")",
+      "Bash(timeout 10 python3 -c ' *)",
+      "Bash(chmod +x /home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/scripts/robot_desc_pub.py)",
+      "Bash(sshpass -p 'sunrise' ssh -o StrictHostKeyChecking=no sunrise@192.168.127.10 \"lsb_release -a 2>/dev/null; echo '==='; ls /opt/ros/ 2>/dev/null; echo '==='; ls ~/ 2>/dev/null | head -10\")",
+      "Bash(sed -i 's|file:///home/cobrander/RDK_X5/robot_ws/src/arm_ros2/meshes/|package://arm_ros2/meshes/|g' /home/cobrander/RDK_X5/robot_ws/src/arm_ros2/urdf/arm.urdf)",
+      "Bash(sed -i 's|file:///home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/meshes/|package://alloy_chassis_mecanum/meshes/|g' /home/cobrander/RDK_X5/robot_ws/src/alloy_chassis_mecanum/urdf/alloy_chassis_mecanum.urdf)"
+    ]
+  }
+}
