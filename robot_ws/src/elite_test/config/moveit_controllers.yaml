@@ -17,3 +17,6 @@ moveit_simple_controller_manager:
       - arm_joint4
       - end_joint1
       - gripper_joint
+
+trajectory_execution:
+  allowed_start_tolerance: 3.14  # 允许任意起始位置偏差

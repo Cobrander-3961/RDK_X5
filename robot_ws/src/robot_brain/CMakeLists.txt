@@ -15,6 +15,7 @@ install(
     scripts/stereo_detect.py
     scripts/yolo_stereo_detect.py
     scripts/voice_chat.py
+    scripts/auto_grasp.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

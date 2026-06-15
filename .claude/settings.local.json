@@ -30,10 +30,16 @@
       "Bash(pip list *)",
       "Bash(kill 54532 54552)",
       "Bash(wait 54415)",
-      "Bash(python3 -c \"import sys; sys.path.insert\\(0,'/home/cobrander/Share/yolov5'\\); import torch; print\\('torch OK'\\)\")"
+      "Bash(python3 -c \"import sys; sys.path.insert\\(0,'/home/cobrander/Share/yolov5'\\); import torch; print\\('torch OK'\\)\")",
+      "Bash(pkill -9 -f \"ros2\\\\|rviz\\\\|move_group\\\\|ros2_control\\\\|robot_state\\\\|joint_state\\\\|arm_bridge\\\\|spawner\\\\|controller_manager\")",
+      "Bash(rm -f /dev/shm/fastrtps_port* /dev/shm/*_elite_*)",
+      "Bash(pkill -9 -f \"ros2\\\\|rviz\\\\|move_group\\\\|ros2_control\\\\|robot_state\\\\|joint_state\\\\|arm_bridge\\\\|spawner\\\\|controller_manager\" 2>/dev/null *)"
     ],
     "additionalDirectories": [
-      "/home/cobrander/RDK_X5/robot_ws/src/robot_brain"
+      "/home/cobrander/RDK_X5/robot_ws/src/robot_brain",
+      "/dev/shm",
+      "/home/cobrander/Share/F407_Base_Control/Hardware",
+      "/home/cobrander/Share/F407_Base_Control/Core/Src"
     ]
   }
 }

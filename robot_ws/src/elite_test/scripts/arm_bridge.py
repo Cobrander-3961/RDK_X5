@@ -37,6 +37,9 @@ class ArmBridge(Node):
 
         self.sub = self.create_subscription(
             JointState, '/joint_states', self.js_cb, 10)
+        # 直接监听控制器命令 (滑块和球都能触发)
+        self.cmd_sub = self.create_subscription(
+            JointState, '/arm_group_controller/command', self.cmd_cb, 10)
 
         # 10Hz 节流发送
         self.timer = self.create_timer(0.1, self.send_if_changed)
@@ -48,6 +51,18 @@ class ArmBridge(Node):
                 idx = msg.name.index(name)
                 new_val = float(msg.position[idx])
                 if abs(new_val - self.joint_positions[i]) > 0.005:
+                    self.changed = True
+                self.joint_positions[i] = new_val
+            except ValueError:
+                pass
+
+    def cmd_cb(self, msg: JointState):
+        """直接监听控制器命令, 滑块模式和球模式都能触发"""
+        for i, name in enumerate(self.joint_names):
+            try:
+                idx = msg.name.index(name)
+                new_val = float(msg.position[idx])
+                if abs(new_val - self.joint_positions[i]) > 0.001:
                     self.changed = True
                 self.joint_positions[i] = new_val
             except ValueError:

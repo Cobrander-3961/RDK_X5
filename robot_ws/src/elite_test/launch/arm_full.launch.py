@@ -12,11 +12,16 @@ def generate_launch_description():
 
     demo_ld = generate_demo_launch(moveit_config)
 
+    import os, glob
+    stm32 = '/dev/ttyACM0'
+    for p in glob.glob('/dev/ttyACM*'):
+        stm32 = p; break  # 用第一个找到的 ACM 设备
     arm_bridge = Node(
         package='elite_test',
         executable='arm_bridge.py',
         name='arm_bridge',
         output='screen',
+        parameters=[{'serial_port': stm32}],
     )
 
     entities = list(demo_ld.entities)
