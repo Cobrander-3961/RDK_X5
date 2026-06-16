@@ -18,7 +18,8 @@ export WAYLAND_DISPLAY=
 export DISPLAY=${DISPLAY:-:0}
 
 # 设置 Qt 插件路径
-export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins:/usr/lib/qt5/plugins
+ARCH=$(dpkg --print-architecture 2>/dev/null || uname -m)
+export QT_PLUGIN_PATH=/usr/lib/${ARCH}-linux-gnu/qt5/plugins:/usr/lib/qt5/plugins
 
 # 检查 ROS 环境
 if [ -z "$ROS_DISTRO" ]; then

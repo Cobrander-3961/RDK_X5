@@ -1,0 +1,88 @@
+# Robot Localization EKF 配置 — 融合轮式里程计 + IMU
+#
+# 策略: EKF 输出 remap 到 /odom, Nav2 无需改配置
+# IMU 仅用 gyro z (航向角速度) 辅助航向估计
+# 里程计提供 x/y 位置 + 线速度 + 航向速度
+
+ekf_filter_node:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true          # 差分驱动机器人 → 2D 平面模式
+
+    publish_tf: true           # 发布 odom→base_link TF
+    publish_acceleration: false
+
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom          # EKF 的世界坐标系 = odom
+
+    # ── 轮式里程计 (/odom) ──
+    # odom0_config 索引: x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az
+    #   使用: 位置 x, 位置 y, yaw, vx, vyaw
+    odom0: /odom
+    odom0_config:
+    - false  # x     (不绝对信任, 有累积漂移)
+    - false  # y
+    - false  # z
+    - false  # roll
+    - false  # pitch
+    - false  # yaw   (不绝对信任 — 仅编码器航向, gyro 负责修正)
+    - true   # vx    (线速度 — 编码器可靠)
+    - true   # vy    (差速底盘 vy=0, 约束条件)
+    - false  # vz
+    - false  # vroll
+    - false  # vpitch
+    - true   # vyaw  (航向速度 — 编码器差分)
+    - false  # ax
+    - false  # ay
+    - false  # az
+
+    # ── IMU (/imu/data_raw) ──
+    #   仅用 gyro z (航向角速度) 抑制编码器航向漂移
+    #   accel 暂不融合 (差速底盘无纵向加速度需求)
+    imu0: /imu/data_raw
+    imu0_config:
+    - false  # x
+    - false  # y
+    - false  # z
+    - false  # roll
+    - false  # pitch
+    - false  # yaw      (IMU 无绝对姿态, 不直接用)
+    - false  # vx
+    - false  # vy
+    - false  # vz
+    - false  # vroll
+    - false  # vpitch
+    - true   # vyaw     (gyro z — 航向角速度, 关键融合项)
+    - false  # ax
+    - false  # ay
+    - false  # az
+
+    # 过程噪声 (调小 = 更信任模型预测)
+    process_noise_covariance:
+    - 0.05   # x
+    - 0.05   # y
+    - 9999.0 # z (不关心)
+    - 9999.0 # roll
+    - 9999.0 # pitch
+    - 0.06   # yaw
+
+    # 初始估计协方差 (首次收到测量后)
+    initial_estimate_covariance:
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9
+    - 1e-9

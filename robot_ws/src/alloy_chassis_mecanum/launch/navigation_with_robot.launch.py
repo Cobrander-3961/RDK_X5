@@ -83,6 +83,28 @@ def generate_launch_description():
             }]
         ),
 
+        # 5.5. EKF 融合 (里程计 + IMU) — 提升航向估计精度
+        Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
+            output='screen',
+            parameters=[
+                PathJoinSubstitution([
+                    FindPackageShare('alloy_chassis_mecanum'),
+                    'config', 'ekf.yaml'
+                ])
+            ],
+            remappings=[('/odometry/filtered', '/odom')],
+        ),
+        # IMU 坐标系 (MPU6050 在 base_link 上方 5cm)
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            arguments=['0', '0', '0.05', '0', '0', '0', 'base_link', 'imu_link'],
+            name='base_link_to_imu_tf',
+        ),
+
         # 6. SLAM Toolbox - 实时建图
         Node(
             package='slam_toolbox',

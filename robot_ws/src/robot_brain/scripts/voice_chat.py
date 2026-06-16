@@ -4,8 +4,8 @@ import sys, os, subprocess, threading, asyncio, speech_recognition as sr
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from doubao_client import DoubaoClient
 
-API_KEY = "ark-4bf39fb4-59ad-4dbe-a983-3dbc441231f2-f0c41"
-MODEL  = "ep-20260609152524-hhxtc"
+API_KEY = os.environ.get("VOLCENGINE_API_KEY", "")
+MODEL  = os.environ.get("VOLCENGINE_MODEL", "doubao-1.5-vision-pro-32k")
 
 # ─── TTS: Edge TTS (免费, 国内可用) ───
 def _play_tts(text):

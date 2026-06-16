@@ -2,8 +2,6 @@
 """YOLOv8 + 双目测距 (ultralytics 本地源码, 零下载)"""
 import cv2, numpy as np, time, sys, os
 
-# 本地 ultralytics 源码路径
-sys.path.insert(0, '/home/cobrander/Share/ultralytics-main')
 
 class Params:
     def __init__(self):

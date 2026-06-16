@@ -16,6 +16,20 @@ install(
     scripts/yolo_stereo_detect.py
     scripts/voice_chat.py
     scripts/auto_grasp.py
+    scripts/auto_grasp_full.py
+    scripts/patrol.py
+    scripts/yolo_test.py
+    scripts/camera_utils.py
+    scripts/navigator.py
+    scripts/grasper.py
+    scripts/detector.py
+    scripts/integrated_patrol.py
+    scripts/voice_commander.py
+    scripts/fruit_analyzer.py
+    scripts/cloud_uploader.py
+    scripts/orchard_patrol.py
+    scripts/stereo_calibrate.py
+    scripts/hand_eye_calibrate.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

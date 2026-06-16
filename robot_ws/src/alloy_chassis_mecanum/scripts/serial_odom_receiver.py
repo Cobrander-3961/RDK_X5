@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 """
-双向串口桥接节点：上行接收 STM32 里程计/TF 数据，下行发送 /cmd_vel 速度指令。
+双向串口桥接节点：上行接收 STM32 里程计/TF/IMU 数据，下行发送 /cmd_vel 速度指令。
 
 上行协议帧: [0xAA][type:1B][length:2B LE][data][0x55]
   - type 0x01: 里程计 (6×double, 48B)
   - type 0x02: TF     (3×double, 24B)
+  - type 0x03: IMU    (6×double, 48B) — gyro xyz + accel xyz
 
 下行协议帧: [0xAA][0x10][0x08 0x00][linear_x:float LE][angular_z:float LE][0x55]
+
+STM32 固件参考 (MPU6050 → type 0x03):
+  1. 初始化 MPU6050 (I2C, 地址 0x68, 唤醒, ±250deg/s gyro, ±2g accel)
+  2. 读寄存器 0x43-0x48 (gyro xyz + accel xyz, 各 2 字节, 大端)
+  3. 转换为 rad/s 和 m/s² (gyro/131.0, accel/16384.0)
+  4. 打包为 6 个 double LE → 发送 [0xAA][0x03][48,0][6×double][0x55]
 """
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import TransformStamped, Quaternion, Twist
+from sensor_msgs.msg import Imu
+from geometry_msgs.msg import TransformStamped, Quaternion, Twist, Vector3
 from tf2_ros import TransformBroadcaster
 import serial
 import struct
@@ -23,7 +31,7 @@ class SerialOdomReceiver(Node):
         super().__init__('serial_odom_receiver')
 
         # 串口配置
-        self.declare_parameter('serial_port', '/dev/ttyUSB0')
+        self.declare_parameter('serial_port', '/dev/ttyACM0')
         self.declare_parameter('baudrate', 115200)
 
         serial_port = self.get_parameter('serial_port').value
@@ -53,6 +61,9 @@ class SerialOdomReceiver(Node):
 
         # 创建里程计发布器
         self.odom_pub = self.create_publisher(Odometry, '/odom', 10)
+
+        # 创建 IMU 数据发布器 (type 0x03)
+        self.imu_pub = self.create_publisher(Imu, '/imu/data_raw', 10)
 
         # 创建TF广播器
         self.tf_broadcaster = TransformBroadcaster(self)
@@ -214,6 +225,8 @@ class SerialOdomReceiver(Node):
                         self.process_odometry_frame(frame_data)
                     elif frame_type == 0x02:  # TF数据
                         self.process_tf_frame(frame_data)
+                    elif frame_type == 0x03:  # IMU数据 (MPU6050)
+                        self.process_imu_frame(frame_data)
 
                     # 移除已处理的帧
                     self.buffer = self.buffer[total_frame_length:]
@@ -314,6 +327,53 @@ class SerialOdomReceiver(Node):
 
         except Exception as e:
             self.get_logger().error(f'Error processing TF frame: {e}')
+
+    def process_imu_frame(self, data):
+        """处理 IMU 数据帧 (type 0x03) — MPU6050 陀螺仪 + 加速度计。
+
+        帧格式 (6×double LE, 48B):
+          angular_velocity_x, angular_velocity_y, angular_velocity_z  (rad/s)
+          linear_acceleration_x, linear_acceleration_y, linear_acceleration_z (m/s²)
+
+        发布到 /imu/data_raw, 供 robot_localization EKF 节点融合。
+        """
+        try:
+            gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z = \
+                struct.unpack('<dddddd', data)
+
+            imu_msg = Imu()
+            imu_msg.header.stamp = self.get_clock().now().to_msg()
+            imu_msg.header.frame_id = 'imu_link'
+
+            # 角速度 (gyro, rad/s)
+            imu_msg.angular_velocity.x = gyro_x
+            imu_msg.angular_velocity.y = gyro_y
+            imu_msg.angular_velocity.z = gyro_z
+            # 协方差: gyro z 可信度高 (yaw 估计关键), xy 较低
+            imu_msg.angular_velocity_covariance = [
+                0.01, 0.0,  0.0,
+                0.0,  0.01, 0.0,
+                0.0,  0.0,  0.005,
+            ]
+
+            # 线加速度 (accel, m/s²)
+            imu_msg.linear_acceleration.x = accel_x
+            imu_msg.linear_acceleration.y = accel_y
+            imu_msg.linear_acceleration.z = accel_z
+            imu_msg.linear_acceleration_covariance = [
+                0.01, 0.0,  0.0,
+                0.0,  0.01, 0.0,
+                0.0,  0.0,  0.01,
+            ]
+
+            # 姿态: 未由 STM32 提供, 设 -1 表示无效
+            # (EKF 自己从 gyro z 积分得到 yaw, 不需要外部姿态)
+            imu_msg.orientation_covariance[0] = -1.0
+
+            self.imu_pub.publish(imu_msg)
+
+        except Exception as e:
+            self.get_logger().error(f'Error processing IMU frame: {e}')
 
     def __del__(self):
         """析构函数，关闭串口"""

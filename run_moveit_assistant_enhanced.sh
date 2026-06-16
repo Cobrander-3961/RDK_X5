@@ -6,7 +6,7 @@
 export QT_QPA_PLATFORM=xcb
 
 # 设置 Qt 插件路径
-export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+export QT_PLUGIN_PATH=/usr/lib/$(dpkg --print-architecture 2>/dev/null || uname -m)-linux-gnu/qt5/plugins
 
 # 禁用 Wayland
 export GDK_BACKEND=x11

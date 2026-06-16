@@ -1,7 +1,7 @@
 # 火山引擎 / 豆包 API 配置
 doubao:
-  api_key: "ark-4bf39fb4-59ad-4dbe-a983-3dbc441231f2-f0c41"
-  model: "ep-20260609152524-hhxtc"  # 推理接入点ID (doubao-1.5-vision-pro)
+  api_key: "${VOLCENGINE_API_KEY}"   # 从环境变量读取, 或直接填写
+  model: "doubao-1.5-vision-pro-32k"   # 推理模型 (或自定义 endpoint ID)
   endpoint: "https://ark.cn-beijing.volces.com/api/v3"
   max_tokens: 1024
   temperature: 0.7
@@ -23,6 +23,15 @@ camera:
   device_id: 0
   width: 640
   height: 480
+
+# 云端数据上传 (火山引擎 DataArk / 通用 HTTP)
+cloud_upload:
+  enabled: false
+  endpoint: ""                           # 数据上传端点 URL
+  dataset_id: "orchard-apple-quality"
+  upload_interval_sec: 60                # 上报间隔 (秒), 0=实时每行上报
+  retry_count: 3
+  offline_cache_dir: "/tmp/orchard_cache"
 
 # 串口 (机械臂)
 serial:

@@ -45,6 +45,19 @@ def generate_launch_description():
         parameters=[{'serial_port': '/dev/ttyACM0', 'baudrate': 115200}],
     )
 
+    # ── 2.5. EKF 融合 (里程计 + IMU) ──
+    ekf_node = Node(
+        package='robot_localization', executable='ekf_node',
+        name='ekf_filter_node', output='screen',
+        parameters=[os.path.join(chassis_pkg, 'config', 'ekf.yaml')],
+        remappings=[('/odometry/filtered', '/odom')],
+    )
+    imu_tf = Node(
+        package='tf2_ros', executable='static_transform_publisher',
+        name='imu_tf',
+        arguments=['0', '0', '0.05', '0', '0', '0', 'base_link', 'imu_link'],
+    )
+
     # ── 3. 激光雷达 + TF ──
     ydlidar = Node(
         package='ydlidar_ros2_driver', executable='ydlidar_ros2_driver_node',
@@ -101,7 +114,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        rsp, jsp, serial_odom, ydlidar, laser_tf, slam, nav2,
+        rsp, jsp, serial_odom, ekf_node, imu_tf, ydlidar, laser_tf, slam, nav2,
         move_group,
         TimerAction(period=4.0, actions=[arm_bridge]),
         rviz,
