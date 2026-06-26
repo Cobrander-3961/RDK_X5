@@ -1,7 +1,7 @@
 # 火山引擎 / 豆包 API 配置
 doubao:
   api_key: "${VOLCENGINE_API_KEY}"   # 从环境变量读取, 或直接填写
-  model: "doubao-1.5-vision-pro-32k"   # 推理模型 (或自定义 endpoint ID)
+  model: "ep-20260609152524-hhxtc"   # Doubao 1.5 Vision Pro 32K endpoint
   endpoint: "https://ark.cn-beijing.volces.com/api/v3"
   max_tokens: 1024
   temperature: 0.7

@@ -46,7 +46,7 @@ class Detector:
                        'book', 'banana', 'apple'}
 
     def __init__(self,
-                 model_path='/home/cobrander/RDK_X5/yolov8n.pt',
+                 model_path='/home/sunrise/RDK_X5/yolov8n.pt',
                  confidence_threshold=0.3,
                  target_classes=None,
                  stability_window=5,
@@ -259,7 +259,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='Detector 独立测试')
     parser.add_argument('--headless', action='store_true', help='无 GUI 模式')
-    parser.add_argument('--model', default='/home/cobrander/RDK_X5/yolov8n.pt',
+    parser.add_argument('--model', default='/home/sunrise/RDK_X5/yolov8n.pt',
                         help='YOLO 模型路径')
     parser.add_argument('--conf', type=float, default=0.3, help='置信度阈值')
     args = parser.parse_args()

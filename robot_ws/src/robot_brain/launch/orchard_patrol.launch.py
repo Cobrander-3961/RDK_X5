@@ -57,7 +57,7 @@ def generate_launch_description():
         description='YOLO 置信度阈值 (苹果检测建议 0.2)'
     )
     model_path_arg = DeclareLaunchArgument(
-        'model_path', default_value='/home/cobrander/RDK_X5/yolov8n.pt',
+        'model_path', default_value='/home/sunrise/RDK_X5/yolov8n.pt',
         description='YOLO 模型路径'
     )
 

@@ -66,7 +66,7 @@ class IntegratedPatrolNode(Node):
         self.declare_parameter('grasp_enabled', True)
         self.declare_parameter('headless', False)
         self.declare_parameter('loop', False)
-        self.declare_parameter('model_path', '/home/cobrander/RDK_X5/yolov8n.pt')
+        self.declare_parameter('model_path', '/home/sunrise/RDK_X5/yolov8n.pt')
         self.declare_parameter('confidence_threshold', 0.3)
         self.declare_parameter('serial_port', '/dev/ttyACM0')
         self.declare_parameter('target_classes', [

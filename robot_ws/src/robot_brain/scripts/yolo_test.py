@@ -6,7 +6,7 @@ def main():
     # 加载 YOLOv8n (本地 pt 文件, 需要 ultralytics 包)
     try:
         from ultralytics import YOLO
-        model = YOLO("/home/cobrander/RDK_X5/yolov8n.pt")
+        model = YOLO("/home/sunrise/RDK_X5/yolov8n.pt")
         model.conf = 0.3
         print("YOLOv8n loaded (ultralytics)")
         use_ultra = True

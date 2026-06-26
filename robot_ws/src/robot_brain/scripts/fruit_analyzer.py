@@ -240,7 +240,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='FruitAnalyzer 独立测试')
     parser.add_argument('--headless', action='store_true', help='无 GUI 模式')
-    parser.add_argument('--model', default='/home/cobrander/RDK_X5/yolov8n.pt')
+    parser.add_argument('--model', default='/home/sunrise/RDK_X5/yolov8n.pt')
     parser.add_argument('--conf', type=float, default=0.2,
                         help='YOLO 置信度阈值 (苹果检测建议 0.2)')
     args = parser.parse_args()

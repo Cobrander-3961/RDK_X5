@@ -13,7 +13,7 @@ from pathlib import Path
 class DoubaoClient:
     """火山引擎豆包大模型 API 封装。"""
 
-    def __init__(self, api_key: str, model: str = "doubao-1.5-vision-pro-32k",
+    def __init__(self, api_key: str, model: str = "ep-20260609152524-hhxtc",
                  endpoint: str = "https://ark.cn-beijing.volces.com/api/v3",
                  max_tokens: int = 1024, temperature: float = 0.7):
         self.api_key = api_key

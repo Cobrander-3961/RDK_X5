@@ -31,7 +31,7 @@ def generate_launch_description():
         description='无 GUI 模式'
     )
     model_path_arg = DeclareLaunchArgument(
-        'model_path', default_value='/home/cobrander/RDK_X5/yolov8n.pt',
+        'model_path', default_value='/home/sunrise/RDK_X5/yolov8n.pt',
         description='YOLO 模型路径'
     )
 

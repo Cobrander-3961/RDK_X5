@@ -49,7 +49,7 @@ class OrchardPatrolNode(Node):
         self.declare_parameter('cloud_endpoint', '')
         self.declare_parameter('dataset_id', 'orchard-apple-quality')
         self.declare_parameter('serial_port', '/dev/ttyACM0')
-        self.declare_parameter('model_path', '/home/cobrander/RDK_X5/yolov8n.pt')
+        self.declare_parameter('model_path', '/home/sunrise/RDK_X5/yolov8n.pt')
         self.declare_parameter('confidence_threshold', 0.2)
         self.declare_parameter('headless', False)
         self.declare_parameter('nav_enabled', True)

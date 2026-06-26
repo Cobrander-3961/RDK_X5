@@ -123,7 +123,7 @@ class VoiceCommanderNode(Node):
         # ── ROS2 参数 ──
         self.declare_parameter('api_key', '')
         self.declare_parameter('serial_port', '/dev/ttyACM0')
-        self.declare_parameter('model_path', '/home/cobrander/RDK_X5/yolov8n.pt')
+        self.declare_parameter('model_path', '/home/sunrise/RDK_X5/yolov8n.pt')
         self.declare_parameter('target_classes', [
             'mouse', 'bottle', 'cup', 'cell phone', 'book', 'banana', 'apple',
         ])

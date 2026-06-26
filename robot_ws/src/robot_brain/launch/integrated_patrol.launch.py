@@ -47,7 +47,7 @@ def generate_launch_description():
         description='是否循环巡逻 (true=无限循环)'
     )
     model_path_arg = DeclareLaunchArgument(
-        'model_path', default_value='/home/cobrander/RDK_X5/yolov8n.pt',
+        'model_path', default_value='/home/sunrise/RDK_X5/yolov8n.pt',
         description='YOLO 模型路径'
     )
     serial_port_arg = DeclareLaunchArgument(

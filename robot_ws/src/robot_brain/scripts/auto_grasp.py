@@ -24,7 +24,7 @@ LIFT=[0,-0.5,-0.3,0,0,-0.5]; PLACE=[-0.5,-0.3,-0.5,0,0,-0.5]; RELEASE=[-0.5,-0.3
 
 def main():
     print("Loading YOLOv8n...")
-    model = YOLO("/home/cobrander/RDK_X5/yolov8n.pt")
+    model = YOLO("/home/sunrise/RDK_X5/yolov8n.pt")
     model.conf = 0.3
     print("YOLOv8n ready!")
 

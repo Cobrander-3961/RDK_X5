@@ -34,7 +34,7 @@ def grasp_sequence(arm, j1):
 
 def main():
     print("Loading YOLOv8n...")
-    model = YOLO("/home/cobrander/RDK_X5/yolov8n.pt"); model.conf = 0.3
+    model = YOLO("/home/sunrise/RDK_X5/yolov8n.pt"); model.conf = 0.3
     print("YOLOv8n ready!")
 
     cam = CameraWrapper(); arm = ArmSerial()
